@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">RegistrationForVaccination</string>
+
+    <string name="guest">Почётный гость</string>
+    <string name="schokoladnica">Шоколадница</string>
+    <string name="wildberries">Wildberries</string>
+
+
+</resources>
