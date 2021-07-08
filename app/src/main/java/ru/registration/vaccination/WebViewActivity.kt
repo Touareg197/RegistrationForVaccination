@@ -4,6 +4,8 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Button
@@ -12,6 +14,11 @@ import androidx.appcompat.app.AppCompatActivity
 
 
 class WebViewActivity : AppCompatActivity() {
+
+    val START_URL = "https://ya.ru"
+    val TARGET_URL = "vk.com"
+
+    lateinit var currentPageUrl: String
 
     lateinit var webView: WebView
     lateinit var buttonShare: Button
@@ -30,23 +37,36 @@ class WebViewActivity : AppCompatActivity() {
 
         webView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView?, url: String): Boolean {
-
-                if (url.contains("vk.com")) {
-                    buttonShare.visibility = View.VISIBLE
-                } else {
-                    buttonShare.visibility = View.GONE
-                }
+                showOrHideShareButton(url)
 
                 view?.loadUrl(url)
                 return true
             }
+
+            override fun shouldInterceptRequest(
+                view: WebView?,
+                request: WebResourceRequest?
+            ): WebResourceResponse? {
+
+//                if (request != null && request.url != null) {
+//                    showOrHideShareButton(request.url.toString())
+//                }
+
+                return super.shouldInterceptRequest(view, request)
+            }
         }
-        webView.loadUrl("https://ya.ru")
+
+        currentPageUrl = START_URL
+        webView.loadUrl(START_URL)
     }
 
     override fun onBackPressed() {
         when {
-            webView.canGoBack() == true -> webView.goBack()
+            webView.canGoBack() == true -> {
+                webView.goBack()
+                currentPageUrl = webView.url!!
+                showOrHideShareButton(currentPageUrl)
+            }
             else -> super.onBackPressed()
         }
     }
@@ -64,6 +84,14 @@ class WebViewActivity : AppCompatActivity() {
             } catch (ex: ActivityNotFoundException) {
                 Toast.makeText(applicationContext, "Some error", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    fun showOrHideShareButton(url: String) {
+        if (url.contains(TARGET_URL)) {
+            buttonShare.visibility = View.VISIBLE
+        } else {
+            buttonShare.visibility = View.GONE
         }
     }
 
