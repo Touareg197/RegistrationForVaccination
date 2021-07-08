@@ -3,6 +3,7 @@ package ru.registration.vaccination
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Button
@@ -13,13 +14,14 @@ import androidx.appcompat.app.AppCompatActivity
 class WebViewActivity : AppCompatActivity() {
 
     lateinit var webView: WebView
+    lateinit var buttonShare: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_webview)
 
-        initWebView()
         initListeners()
+        initWebView()
     }
 
     fun initWebView() {
@@ -28,11 +30,18 @@ class WebViewActivity : AppCompatActivity() {
 
         webView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView?, url: String): Boolean {
+
+                if (url.contains("vk.com")) {
+                    buttonShare.visibility = View.VISIBLE
+                } else {
+                    buttonShare.visibility = View.GONE
+                }
+
                 view?.loadUrl(url)
                 return true
             }
         }
-        webView.loadUrl("https://yandex.ru")
+        webView.loadUrl("https://ya.ru")
     }
 
     override fun onBackPressed() {
@@ -43,12 +52,12 @@ class WebViewActivity : AppCompatActivity() {
     }
 
     fun initListeners() {
-        val buttonShare: Button = findViewById(R.id.share_btn)
+        buttonShare = findViewById(R.id.share_btn)
         buttonShare.setOnClickListener {
 //            Snackbar.make(it, "Вы нажали кнопку ПОДЕЛИТЬСЯ", Snackbar.LENGTH_SHORT).show()
             val intent = Intent(Intent.ACTION_SEND)
             intent.type = "text/plain"
-            val textToSend = "https://yandex.ru"
+            val textToSend = "https://developers.sber.ru/"
             intent.putExtra(Intent.EXTRA_TEXT, textToSend)
             try {
                 startActivity(Intent.createChooser(intent, "Поделиться через"))
