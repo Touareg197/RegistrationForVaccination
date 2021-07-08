@@ -18,8 +18,6 @@ class WebViewActivity : AppCompatActivity() {
     val START_URL = "https://ya.ru"
     val TARGET_URL = "vk.com"
 
-    lateinit var currentPageUrl: String
-
     lateinit var webView: WebView
     lateinit var buttonShare: Button
 
@@ -48,15 +46,10 @@ class WebViewActivity : AppCompatActivity() {
                 request: WebResourceRequest?
             ): WebResourceResponse? {
 
-//                if (request != null && request.url != null) {
-//                    showOrHideShareButton(request.url.toString())
-//                }
-
                 return super.shouldInterceptRequest(view, request)
             }
         }
 
-        currentPageUrl = START_URL
         webView.loadUrl(START_URL)
     }
 
@@ -64,8 +57,6 @@ class WebViewActivity : AppCompatActivity() {
         when {
             webView.canGoBack() == true -> {
                 webView.goBack()
-                currentPageUrl = webView.url!!
-                showOrHideShareButton(currentPageUrl)
             }
             else -> super.onBackPressed()
         }
