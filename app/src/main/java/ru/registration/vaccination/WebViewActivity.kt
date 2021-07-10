@@ -16,7 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 class WebViewActivity : AppCompatActivity() {
 
     val START_URL = "https://ya.ru"
-    val TARGET_URL = "vk.com"
+    val TARGET_URL = "/success"
 
     lateinit var webView: WebView
     lateinit var buttonShare: Button
