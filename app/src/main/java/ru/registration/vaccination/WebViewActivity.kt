@@ -2,7 +2,6 @@ package ru.registration.vaccination
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.View
 import android.webkit.WebResourceRequest
@@ -17,7 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 class WebViewActivity : AppCompatActivity() {
 
     val START_URL = "https://sbercovidhack.vercel.app"
-    val TARGET_URL = "https://sbercovidhack.vercel.app/success"
+    val TARGET_URL = "/success"
 
     lateinit var webView: WebView
     lateinit var buttonShare: Button
@@ -33,56 +32,18 @@ class WebViewActivity : AppCompatActivity() {
     fun initWebView() {
         webView = findViewById(R.id.main_webview)
         webView.settings.setJavaScriptEnabled(true)
-        webView.addJavascriptInterface(MyJavaScriptInterface(), "HtmlHandler")
 
         webView.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(
-                view: WebView?,
-                request: WebResourceRequest?
-            ): Boolean {
-                return super.shouldOverrideUrlLoading(view, request)
-            }
-
-            override fun shouldOverrideUrlLoading(view: WebView?, url: String): Boolean {
+            override fun doUpdateVisitedHistory(view: WebView?, url: String, isReload: Boolean) {
                 showOrHideShareButton(url)
-
-                view?.loadUrl(url)
-                return true
-            }
-
-            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                if (url != null) {
-                    showOrHideShareButton(url)
-                }
-                super.onPageStarted(view, url, favicon)
-            }
-
-            override fun onLoadResource(view: WebView?, url: String?) {
-                if (url != null) {
-                    showOrHideShareButton(url)
-                }
-                super.onLoadResource(view, url)
-            }
-
-            override fun onPageFinished(view: WebView?, url: String?) {
-                if (url != null) {
-                    showOrHideShareButton(url)
-                }
-
-                //////////
-                webView.loadUrl("javascript:window.HtmlHandler.handleHtml" +
-                        "('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>');");
-                //////////
-                super.onPageFinished(view, url)
+                super.doUpdateVisitedHistory(view, url, isReload)
             }
 
             override fun shouldInterceptRequest(
                 view: WebView?,
                 request: WebResourceRequest?
             ): WebResourceResponse? {
-                if (request != null && request.url != null) {
-                    showOrHideShareButton(request.url.toString())
-                }
+
                 return super.shouldInterceptRequest(view, request)
             }
         }
@@ -116,12 +77,11 @@ class WebViewActivity : AppCompatActivity() {
     }
 
     fun showOrHideShareButton(url: String) {
-        if (url == TARGET_URL) {
+        if (url.contains(TARGET_URL)) {
             buttonShare.visibility = View.VISIBLE
+        } else {
+            buttonShare.visibility = View.GONE
         }
-//        else {
-//            buttonShare.visibility = View.GONE
-//        }
     }
 
 }
